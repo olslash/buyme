@@ -2,8 +2,6 @@ import { map, takeWhile, drop, range, sum } from 'lodash';
 import React, { PropTypes } from 'react';
 // const { number } = PropTypes;
 
-import WidthProvider from 'shared-components/WidthProvider';
-
 function aspectRatio({ width, height }) {
   return width / height;
 }
@@ -34,7 +32,7 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
   };
 }
 
-function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool = [], width, sceneLeft }) {
+export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool = [], width, sceneLeft }) {
   let remainingImages = [...imagePool];
 
   const idealRowHeight = sceneImage.height / sceneNeighborRows;
@@ -85,36 +83,3 @@ function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool = [], width, s
     </div>
   );
 }
-
-export default class App extends React.Component {
-  render() {
-    return (
-      <div className="grid grid-pad">
-        <div className="col-1-1">
-          <WidthProvider>
-            <SceneGrid sceneImage={ images[3] }
-                       sceneNeighborRows={ 2 }
-                       imagePool={ images }
-            />
-            <SceneGrid sceneImage={ images[3] }
-                       sceneNeighborRows={ 2 }
-                       imagePool={ images }
-                       sceneLeft
-            />
-          </WidthProvider>
-        </div>
-      </div>
-    );
-  }
-}
-
-
-function requireAll(r) {
-  return r.keys().map(r);
-}
-
-const images = requireAll(require.context(
-  '../static/images',
-  true, // include subdirectories
-  /\.(png|jpg|jpeg)$/
-));
