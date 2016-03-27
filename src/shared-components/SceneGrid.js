@@ -2,6 +2,9 @@ import { map, takeWhile, drop, range, sum } from 'lodash';
 import React, { PropTypes } from 'react';
 // const { number } = PropTypes;
 
+import Paper from 'material-ui/lib/paper';
+
+
 function aspectRatio({ width, height }) {
   return width / height;
 }
@@ -53,7 +56,7 @@ export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool
   const scaleFactor = width / fullCombinedWidth;
 
   return (
-    <div style={ { 'line-height': '0' } }>
+    <div style={ { 'lineHeight': '0' } }>
       <div className="scene-image">
         <div style={ { float: sceneLeft ? 'left' : 'right' } }>
           <img { ...sceneImage }
@@ -68,13 +71,28 @@ export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool
           neighborRows.map(({ images, height }, i) => (
             <div key={ i }>
               {
-                images.map(image => (
-                  <img { ...image }
-                    height={ height * scaleFactor }
-                    width={ aspectRatio(image) * height * scaleFactor }
-                    key={ image.src }
-                  />
-                ))
+                images.map(image => {
+                  const imageHeight = height * scaleFactor;
+                  const imageAspectRatio = aspectRatio(image);
+                  const imageWidth = imageAspectRatio * height * scaleFactor;
+
+                  return (
+                    <Paper zDepth={ 3 }
+                           style={ {
+                             height: imageHeight,
+                             width: imageWidth,
+                             display: 'inline-block'
+                           } }
+                           key={ image.src }
+                    >
+                      <img { ...image }
+                        height={ imageHeight }
+                        width={ imageWidth }
+                        key={ image.src }
+                      />
+                    </Paper>
+                  );
+                })
               }
             </div>
           ))
