@@ -1,8 +1,11 @@
 import { map, takeWhile, drop, range, sum } from 'lodash';
-import React, { PropTypes } from 'react';
-// const { number } = PropTypes;
-
+import React from 'react';
 import Paper from 'material-ui/lib/paper';
+
+import { PropTypes } from 'helpers/react';
+const { string, number, shape, arrayOf, bool } = PropTypes;
+
+
 
 
 function aspectRatio({ width, height }) {
@@ -35,7 +38,9 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
   };
 }
 
-export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool = [], width, margin = 10, sceneLeft }) {
+export default function SceneGrid({
+  sceneImage, sceneNeighborRows = 2, imagePool = [], width, margin = 10, sceneLeft
+}) {
   let remainingImages = [...imagePool];
 
   const idealRowHeight = sceneImage.height / sceneNeighborRows;
@@ -117,3 +122,19 @@ export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool
     </div>
   );
 }
+
+const imagePropType = shape({
+  height: number,
+  src: string,
+  type: string,
+  width: number
+});
+
+SceneGrid.propTypes = {
+  sceneImage: imagePropType,
+  sceneNeighborRows: number,
+  imagePool: arrayOf(imagePropType),
+  width: number,
+  margin: number,
+  sceneLeft: bool
+};

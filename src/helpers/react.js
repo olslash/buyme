@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropTypes as ReactPropTypes } from 'react';
 
 export function injectInto(children, props) {
   return React.Children.map(children, (element) => {
@@ -7,3 +7,9 @@ export function injectInto(children, props) {
       : React.cloneElement(element, props(element.props));
   });
 }
+
+export const PropTypes = {
+  ...ReactPropTypes,
+  children: ReactPropTypes.node
+};
+

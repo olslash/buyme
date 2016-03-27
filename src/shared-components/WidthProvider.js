@@ -1,12 +1,12 @@
 import { findDOMNode } from 'react-dom';
-import React, { PropTypes } from 'react';
-const { objectOf, string, element, number, bool } = PropTypes;
+import React from 'react';
 
-import { injectInto } from 'helpers/react';
+import { injectInto, PropTypes } from 'helpers/react';
+const { objectOf, string, children, bool } = PropTypes;
 
 export default class WidthProvider extends React.Component {
   static propTypes = {
-    children: element,
+    children: children,
     style: objectOf(string),
     injectStyle: bool
   };
