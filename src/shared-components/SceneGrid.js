@@ -35,7 +35,7 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
   };
 }
 
-export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool = [], width, sceneLeft }) {
+export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool = [], width, margin = 10, sceneLeft }) {
   let remainingImages = [...imagePool];
 
   const idealRowHeight = sceneImage.height / sceneNeighborRows;
@@ -55,14 +55,26 @@ export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool
   // what percentage smaller does the combined width of scene + neighbors need to be, to fit in the container width?
   const scaleFactor = width / fullCombinedWidth;
 
+  const finalSceneImageWidth = scaledSceneWidth * scaleFactor;
+  const finalSceneImageHeight = (scaledSceneWidth / aspectRatio(sceneImage)) * scaleFactor;
+
   return (
     <div style={ { 'lineHeight': '0' } }>
       <div className="scene-image">
-        <div style={ { float: sceneLeft ? 'left' : 'right' } }>
-          <img { ...sceneImage }
-            width={ scaledSceneWidth * scaleFactor }
-            height={ (scaledSceneWidth / aspectRatio(sceneImage)) * scaleFactor }
-          />
+        <div style={ { float: sceneLeft ? 'left' : 'right', width: finalSceneImageWidth, height: finalSceneImageHeight } }>
+          <Paper zDepth={ 3 }
+                 style={ {
+                   height: finalSceneImageHeight - margin,
+                   width: finalSceneImageWidth - margin,
+                   display: 'inline-block'
+                 } }
+
+          >
+            <img { ...sceneImage }
+              width={ finalSceneImageWidth - margin }
+              height={ finalSceneImageHeight - margin }
+            />
+          </Paper>
         </div>
       </div>
 
@@ -77,20 +89,24 @@ export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool
                   const imageWidth = imageAspectRatio * height * scaleFactor;
 
                   return (
-                    <Paper zDepth={ 3 }
-                           style={ {
-                             height: imageHeight,
-                             width: imageWidth,
+                    // invisible wrapper is here so that we can do a fake margin by scaling down the image inside it
+                    <div style={ { height: imageHeight, width: imageWidth, display: 'inline-block' } }
+                         key={ image.src }
+                    >
+                      <Paper zDepth={ 3 }
+                             style={ {
+                             height: imageHeight - margin,
+                             width: imageWidth - margin,
                              display: 'inline-block'
                            } }
-                           key={ image.src }
-                    >
-                      <img { ...image }
-                        height={ imageHeight }
-                        width={ imageWidth }
-                        key={ image.src }
-                      />
-                    </Paper>
+
+                      >
+                        <img { ...image }
+                          height={ imageHeight - margin }
+                          width={ imageWidth - margin }
+                        />
+                      </Paper>
+                    </div>
                   );
                 })
               }
