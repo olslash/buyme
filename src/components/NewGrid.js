@@ -34,7 +34,7 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
   };
 }
 
-function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool = [], width }) {
+function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool = [], width, sceneLeft }) {
   let remainingImages = [...imagePool];
 
   const idealRowHeight = sceneImage.height / sceneNeighborRows;
@@ -57,7 +57,7 @@ function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool = [], width })
   return (
     <div style={ { 'line-height': '0' } }>
       <div className="scene-image">
-        <div style={ { float: 'right' } }>
+        <div style={ { float: sceneLeft ? 'left' : 'right' } }>
           <img { ...sceneImage }
             width={ scaledSceneWidth * scaleFactor }
             height={ (scaledSceneWidth / aspectRatio(sceneImage)) * scaleFactor }
@@ -95,6 +95,11 @@ export default class App extends React.Component {
             <SceneGrid sceneImage={ images[3] }
                        sceneNeighborRows={ 2 }
                        imagePool={ images }
+            />
+            <SceneGrid sceneImage={ images[3] }
+                       sceneNeighborRows={ 2 }
+                       imagePool={ images }
+                       sceneLeft
             />
           </WidthProvider>
         </div>
