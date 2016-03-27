@@ -49,8 +49,19 @@ const getEntry = function (env) {
 };
 
 const getLoaders = function (env) {
-  const loaders = [{ test: /\.js$/, include: path.join(__dirname, 'src'), loaders: ['babel', 'eslint'] },
-                   { test: /\.(jpe?g|png|gif|svg)$/i, loaders: ['file']}];
+  const loaders = [
+    { test: /\.js$/, include: path.join(__dirname, 'src'), loaders: ['babel', 'eslint'] },
+    { test: /\.(jpe?g|png|gif|svg)$/i, loaders: ['image-size'] },
+
+    {
+      test: /\.woff/,
+      loader: "url-loader?limit=10000&minetype=application/font-woff"
+    },
+
+    {
+      test: /\.(ttf|eot|svg)/, // (\?v=[0-9]\.[0-9]\.[0-9])?
+      loader: "file-loader"
+    }];
 
   if (env === productionEnvironment ) {
     // generate separate physical stylesheet for production build using ExtractTextPlugin. This provides separate caching and avoids a flash of unstyled content on load.
@@ -65,7 +76,7 @@ const getLoaders = function (env) {
 function getConfig(env) {
   return {
     debug: true,
-    devtool: env === productionEnvironment  ? 'source-map' : 'cheap-module-eval-source-map', // more info:https://webpack.github.io/docs/build-performance.html#sourcemaps and https://webpack.github.io/docs/configuration.html#devtool
+    devtool: env === productionEnvironment  ? 'source-map' : 'cheap-source-map', // more info:https://webpack.github.io/docs/build-performance.html#sourcemaps and https://webpack.github.io/docs/configuration.html#devtool
     noInfo: true, // set to false to see a list of every file being bundled.
     entry: getEntry(env),
     target: env === testEnvironment ? 'node' : 'web', // necessary per https://webpack.github.io/docs/testing.html#compile-and-test
@@ -77,6 +88,9 @@ function getConfig(env) {
     plugins: getPlugins(env),
     module: {
       loaders: getLoaders(env)
+    },
+    resolve: {
+      root: [path.resolve('src')]
     }
   };
 }

@@ -3,7 +3,7 @@
 //With Redux, the actual stores are in /reducers.
 
 import { createStore } from 'redux';
-import rootReducer from '../reducers';
+import rootReducer from '../modules';
 
 export default function configureStore(initialState) {
   let store;
@@ -15,8 +15,8 @@ export default function configureStore(initialState) {
 
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
-    module.hot.accept('../reducers', () => {
-      const nextReducer = require('../reducers').default;
+    module.hot.accept('../modules', () => {
+      const nextReducer = require('../modules').default;
       store.replaceReducer(nextReducer);
     });
   }

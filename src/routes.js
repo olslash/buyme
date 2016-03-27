@@ -2,14 +2,14 @@ import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 
 import App from './components/App';
-import FuelSavingsPage from './containers/FuelSavingsPage';
-import AboutPage from './components/AboutPage.js';
-import NotFoundPage from './components/NotFoundPage.js';
+import GridPage from './components/NewGrid';
 
 export default (
   <Route path="/" component={App}>
-    <IndexRoute component={FuelSavingsPage} />
-    <Route path="about" component={AboutPage}/>
-    <Route path="*" component={NotFoundPage} />
+      <IndexRoute component={GridPage} />
+      <Route path="grid" component={GridPage}/>
+    {
+      /*<Route path="*" component={NotFoundPage} />*/
+    }
   </Route>
 );
