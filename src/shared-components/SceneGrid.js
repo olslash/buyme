@@ -31,7 +31,7 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
 
   return {
     images: rowImages,
-    height: rowHeightAtContainerWidth
+    height: images.length > 0 ? rowHeightAtContainerWidth : 0
   };
 }
 
