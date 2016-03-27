@@ -10,9 +10,9 @@ export default class WidthProvider extends React.Component {
     style: objectOf(string),
     injectStyle: bool
   };
-  
+
   state = {
-    width: 1280
+    width: 0
   };
 
   componentDidMount() {
