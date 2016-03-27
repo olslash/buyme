@@ -41,12 +41,13 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
 export default function SceneGrid({
   sceneImage, sceneNeighborRows = 2, imagePool = [], width, margin = 10, sceneLeft
 }) {
+  const containerWidth = width - 1; // stay 1 pixel away from the edge to prevent browser reflow bugs.
   let remainingImages = [...imagePool];
 
   const idealRowHeight = sceneImage.height / sceneNeighborRows;
 
   const neighborRows = range(0, sceneNeighborRows).map(_ => {
-    const { images, height } = balancedRow(remainingImages, idealRowHeight, width);
+    const { images, height } = balancedRow(remainingImages, idealRowHeight, containerWidth);
     remainingImages = drop(remainingImages, images.length);
 
     return { images, height };
@@ -55,10 +56,10 @@ export default function SceneGrid({
   const combinedNeighborRowHeight = sum(map(neighborRows, 'height'));
   const sceneAspectRatio = aspectRatio(sceneImage);
   const scaledSceneWidth = combinedNeighborRowHeight * sceneAspectRatio;
-  const fullCombinedWidth = scaledSceneWidth + width; // neighbor rows use full container width
+  const fullCombinedWidth = scaledSceneWidth + containerWidth; // neighbor rows use full container width
 
   // what percentage smaller does the combined width of scene + neighbors need to be, to fit in the container width?
-  const scaleFactor = width / fullCombinedWidth;
+  const scaleFactor = containerWidth / fullCombinedWidth;
 
   const finalSceneImageWidth = scaledSceneWidth * scaleFactor || 0;
   const finalSceneImageHeight = (scaledSceneWidth / aspectRatio(sceneImage)) * scaleFactor || 0;
