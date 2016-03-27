@@ -60,11 +60,11 @@ export default function SceneGrid({
   // what percentage smaller does the combined width of scene + neighbors need to be, to fit in the container width?
   const scaleFactor = width / fullCombinedWidth;
 
-  const finalSceneImageWidth = scaledSceneWidth * scaleFactor;
-  const finalSceneImageHeight = (scaledSceneWidth / aspectRatio(sceneImage)) * scaleFactor;
+  const finalSceneImageWidth = scaledSceneWidth * scaleFactor || 0;
+  const finalSceneImageHeight = (scaledSceneWidth / aspectRatio(sceneImage)) * scaleFactor || 0;
 
   return (
-    <div style={ { 'lineHeight': '0', 'marginBottom': 20 } }>
+    <div style={ { 'lineHeight': 0, 'marginBottom': 20 } }>
       <div className="scene-image">
         <div style={ { float: sceneLeft ? 'left' : 'right', width: finalSceneImageWidth, height: finalSceneImageHeight } }>
           <Paper zDepth={ 3 }
