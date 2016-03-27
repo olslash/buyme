@@ -59,7 +59,7 @@ export default function SceneGrid({ sceneImage, sceneNeighborRows = 2, imagePool
   const finalSceneImageHeight = (scaledSceneWidth / aspectRatio(sceneImage)) * scaleFactor;
 
   return (
-    <div style={ { 'lineHeight': '0' } }>
+    <div style={ { 'lineHeight': '0', 'marginBottom': 20 } }>
       <div className="scene-image">
         <div style={ { float: sceneLeft ? 'left' : 'right', width: finalSceneImageWidth, height: finalSceneImageHeight } }>
           <Paper zDepth={ 3 }
