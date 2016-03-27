@@ -1,3 +1,5 @@
+// @flow
+
 import { findDOMNode } from 'react-dom';
 import React, { PropTypes } from 'react';
 const { objectOf, string, element, number, bool } = PropTypes;

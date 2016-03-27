@@ -1,3 +1,5 @@
+// @flow
+
 function requireAll(r) {
   return r.keys().map(r);
 }

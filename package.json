@@ -14,7 +14,8 @@
     "prebuild": "npm run clean-dist && npm run build:html",
     "build": "npm run test && babel-node tools/build.js && npm run open:dist",
     "test": "",
-    "test:watch": "npm run test -- --watch"
+    "test:watch": "npm run test -- --watch",
+    "flow": "flow; test $? -eq 0 -o $? -eq 2"
   },
   "author": "Cory House",
   "license": "MIT",
@@ -51,6 +52,7 @@
     "eslint-plugin-react": "4.0.0",
     "extract-text-webpack-plugin": "1.0.1",
     "file-loader": "0.8.5",
+    "flow-bin": "0.22.1",
     "image-size-loader": "0.7.0",
     "mocha": "2.3.4",
     "node-sass": "3.4.2",

@@ -1,0 +1,16 @@
+[ignore]
+.*/node_modules/.*
+
+[include]
+
+[libs]
+
+[options]
+module.name_mapper='^containers\/\(.*\)$' -> '<PROJECT_ROOT>/src/containers/\1'
+module.name_mapper='^helpers\/\(.*\)$' -> '<PROJECT_ROOT>/src/helpers/\1'
+module.name_mapper='^modules\/\(.*\)$' -> '<PROJECT_ROOT>/src/modules/\1'
+module.name_mapper='^shared-components\/\(.*\)$' -> '<PROJECT_ROOT>/src/shared-components/\1'
+module.name_mapper='^static\/\(.*\)$' -> '<PROJECT_ROOT>/src/static/\1'
+module.name_mapper='^store\/\(.*\)$' -> '<PROJECT_ROOT>/src/store/\1'
+module.name_mapper='^styles\/\(.*\)$' -> '<PROJECT_ROOT>/src/styles/\1'
+
