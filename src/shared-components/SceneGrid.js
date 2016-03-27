@@ -1,5 +1,3 @@
-// @flow
-
 import { map, takeWhile, drop, range, sum } from 'lodash';
 import React, { PropTypes } from 'react';
 // const { number } = PropTypes;
@@ -33,7 +31,6 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
 
   return {
     images: rowImages,
-    // hack: if the image pool was empty, just give a height of 0
     height: images.length > 0 ? rowHeightAtContainerWidth : 0
   };
 }

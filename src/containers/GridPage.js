@@ -1,5 +1,3 @@
-// @flow
-
 import React from 'react';
 
 import { requireAllOfType } from 'helpers/file';
@@ -19,8 +17,8 @@ export default class GridPage extends React.Component {
                        imagePool={ images }
             />
             <SceneGrid sceneImage={ images[3] }
-                       sceneNeighborRows={ 3 }
-                       imagePool={ [...images, ...images] }
+                       sceneNeighborRows={ 2 }
+                       imagePool={ images }
                        sceneLeft
             />
           </WidthProvider>

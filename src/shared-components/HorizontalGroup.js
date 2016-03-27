@@ -1,5 +1,3 @@
-// @flow
-
 import React, { PropTypes } from 'react';
 const { number } = PropTypes;
 
@@ -11,7 +9,7 @@ export default class HorizontalGroup extends React.Component {
 
   render() {
     return (
-
+      
     )
   }
 }
