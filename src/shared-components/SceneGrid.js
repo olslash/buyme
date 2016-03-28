@@ -1,12 +1,10 @@
 import { map, takeWhile, drop, range, sum } from 'lodash';
 import React from 'react';
-import Paper from 'material-ui/lib/paper';
 
 import { PropTypes } from 'helpers/react';
 const { string, number, shape, arrayOf, bool } = PropTypes;
 
-
-
+import PaperImage from 'shared-components/PaperImage';
 
 function aspectRatio({ width, height }) {
   return width / height;
@@ -14,12 +12,12 @@ function aspectRatio({ width, height }) {
 
 function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the images, and the scale needed for them to fit in the width
   const images = [...imagePool];
+  let resultHeight;
 
   let rowWidthAtIdealHeight = 0;
   const rowImages = takeWhile(images, (image) => {
     const imageAspectRatio = aspectRatio(image);
     const scaledImageWidth = idealHeight * imageAspectRatio;
-
 
     if (rowWidthAtIdealHeight < containerWidth) {
       rowWidthAtIdealHeight += scaledImageWidth;
@@ -29,19 +27,23 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
     return false;
   });
 
-  if (!(rowWidthAtIdealHeight >= containerWidth)) {
-    return {
-      images: rowImages,
-      height: idealHeight
-    };
-  }
-
   const rowAspectRatio = aspectRatio({ width: rowWidthAtIdealHeight, height: idealHeight });
   const rowHeightAtContainerWidth = containerWidth / rowAspectRatio;
 
+  if (!(rowWidthAtIdealHeight >= containerWidth)) {
+    // not enough images to fill the row; use ideal height and leave space, to avoid scaling the few images too large.
+    resultHeight = idealHeight;
+  } else if (images.length === 0) {
+    // no images in pool; use 0 height to avoid NaN
+    resultHeight = 0;
+  } else {
+    // otherwise use the calculated height to scale the combined row to container width
+    resultHeight  = rowHeightAtContainerWidth;
+  }
+
   return {
     images: rowImages,
-    height: images.length > 0 ? rowHeightAtContainerWidth : 0
+    height: resultHeight
   };
 }
 
@@ -53,7 +55,7 @@ export default function SceneGrid({
 
   const idealRowHeight = sceneImage.height / sceneNeighborRows;
 
-  const neighborRows = range(0, sceneNeighborRows).map(_ => {
+  const neighborRows = range(sceneNeighborRows).map(_ => {
     const { images, height } = balancedRow(remainingImages, idealRowHeight, containerWidth);
     remainingImages = drop(remainingImages, images.length);
 
@@ -74,21 +76,12 @@ export default function SceneGrid({
   return (
     <div style={ { 'lineHeight': 0, 'marginBottom': 20 } }>
       <div className="scene-image">
-        <div style={ { float: sceneLeft ? 'left' : 'right', width: finalSceneImageWidth, height: finalSceneImageHeight } }>
-          <Paper zDepth={ 3 }
-                 style={ {
-                   height: finalSceneImageHeight - margin,
-                   width: finalSceneImageWidth - margin,
-                   display: 'inline-block'
-                 } }
-
-          >
-            <img { ...sceneImage }
-              width={ finalSceneImageWidth - margin }
-              height={ finalSceneImageHeight - margin }
-            />
-          </Paper>
-        </div>
+        <PaperImage style={ { float: sceneLeft ? 'left' : 'right' } }
+                    margin={ margin }
+                    height={ finalSceneImageHeight }
+                    width={ finalSceneImageWidth }
+                    src={ sceneImage.src }
+        />
       </div>
 
       <div>
@@ -102,29 +95,40 @@ export default function SceneGrid({
                   const imageWidth = imageAspectRatio * height * scaleFactor;
 
                   return (
-                    // invisible wrapper is here so that we can do a fake margin by scaling down the image inside it
-                    <div style={ { height: imageHeight, width: imageWidth, display: 'inline-block' } }
-                         key={ image.src }
-                    >
-                      <Paper zDepth={ 3 }
-                             style={ {
-                             height: imageHeight - margin,
-                             width: imageWidth - margin,
-                             display: 'inline-block'
-                           } }
-
-                      >
-                        <img { ...image }
-                          height={ imageHeight - margin }
-                          width={ imageWidth - margin }
-                        />
-                      </Paper>
-                    </div>
+                    <PaperImage margin={ margin }
+                                height={ imageHeight }
+                                width={ imageWidth }
+                                src={ image.src }
+                                key={ image.src }
+                    />
                   );
                 })
               }
             </div>
           ))
+        }
+      </div>
+      <div>
+        {
+          range(remainingImages.length).map((i) => {
+            const { images, height } = balancedRow(remainingImages, 100, containerWidth);
+            remainingImages = drop(remainingImages, images.length);
+
+            return (
+              <div key={ i }>
+                {
+                  images.map(image => (
+                    <PaperImage src={ image.src }
+                                height={ height }
+                                width={ aspectRatio(image) * height }
+                                margin={ margin }
+                                key={ image.src }
+                    />
+                  ))
+                }
+              </div>
+            );
+          }).filter(Boolean)
         }
       </div>
     </div>
