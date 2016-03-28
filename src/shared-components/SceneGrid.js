@@ -29,6 +29,13 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
     return false;
   });
 
+  if (!(rowWidthAtIdealHeight >= containerWidth)) {
+    return {
+      images: rowImages,
+      height: idealHeight
+    };
+  }
+
   const rowAspectRatio = aspectRatio({ width: rowWidthAtIdealHeight, height: idealHeight });
   const rowHeightAtContainerWidth = containerWidth / rowAspectRatio;
 
