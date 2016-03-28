@@ -48,7 +48,7 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
 }
 
 export default function SceneGrid({
-  sceneImage, sceneNeighborRows = 2, imagePool = [], width, margin = 10, sceneLeft
+  sceneImage, sceneNeighborRows = 2, imagePool = [], width, margin = 10, sceneLeft, extraRowsIdealHeight = 150
 }) {
   const containerWidth = width - 1; // stay 1 pixel away from the edge to prevent browser reflow bugs.
   let remainingImages = [...imagePool];
@@ -111,7 +111,11 @@ export default function SceneGrid({
       <div>
         {
           range(remainingImages.length).map((i) => {
-            const { images, height } = balancedRow(remainingImages, 100, containerWidth);
+            if (remainingImages.length === 0) {
+              return null;
+            }
+
+            const { images, height } = balancedRow(remainingImages, extraRowsIdealHeight, containerWidth);
             remainingImages = drop(remainingImages, images.length);
 
             return (
