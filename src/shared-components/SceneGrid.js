@@ -108,34 +108,34 @@ export default function SceneGrid({
           ))
         }
       </div>
-      <div>
-        <div className="grid">
-          {
-            range(remainingImages.length).map((i) => {
-              if (remainingImages.length === 0) {
-                return null;
-              }
+      <div style={ { marginTop: 5 } }>
+        { /* margin required to prevent row above interfering with layout */ }
+        {
+          range(remainingImages.length).map((i) => {
+            if (remainingImages.length === 0) {
+              // will be filtered out so we don't get extra divs
+              return null;
+            }
 
-              const { images, height } = balancedRow(remainingImages, extraRowsIdealHeight, containerWidth);
-              remainingImages = drop(remainingImages, images.length);
+            const { images, height } = balancedRow(remainingImages, extraRowsIdealHeight, containerWidth);
+            remainingImages = drop(remainingImages, images.length);
 
-              return (
-                <div key={ i }>
-                  {
-                    images.map(image => (
-                      <PaperImage src={ image.src }
-                                  height={ height }
-                                  width={ aspectRatio(image) * height }
-                                  margin={ margin }
-                                  key={ image.src }
-                      />
-                    ))
-                  }
-                </div>
-              );
-            }).filter(Boolean)
-          }
-        </div>
+            return (
+              <div key={ i }>
+                {
+                  images.map(image => (
+                    <PaperImage src={ image.src }
+                                height={ height }
+                                width={ aspectRatio(image) * height }
+                                margin={ margin }
+                                key={ image.src }
+                    />
+                  ))
+                }
+              </div>
+            );
+          }).filter(Boolean)
+        }
       </div>
     </div>
   );
