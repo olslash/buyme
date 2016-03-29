@@ -153,6 +153,7 @@ SceneGrid.propTypes = {
   sceneNeighborRows: number,
   imagePool: arrayOf(imagePropType),
   width: number,
+  extraRowsIdealHeight: number,
   margin: number,
   sceneLeft: bool
 };
