@@ -10,6 +10,7 @@ export function injectInto(children, props) {
 
 export const PropTypes = {
   ...ReactPropTypes,
-  children: ReactPropTypes.node
+  children: ReactPropTypes.node,
+  oneChild: ReactPropTypes.element
 };
 

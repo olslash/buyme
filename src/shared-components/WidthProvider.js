@@ -1,5 +1,6 @@
 import { findDOMNode } from 'react-dom';
 import React from 'react';
+import { omit, keys } from 'lodash';
 
 import { injectInto, PropTypes } from 'helpers/react';
 const { objectOf, string, children, bool } = PropTypes;
@@ -37,7 +38,9 @@ export default class WidthProvider extends React.Component {
 
   render() {
     const props = {
-      width: this.state.width
+      width: this.state.width,
+      // pass on additional properties set on the instance to children
+      ...omit(this.props, keys(WidthProvider.propTypes))
     };
 
     const childrenWithProps = injectInto(this.props.children, props);

@@ -1,8 +1,10 @@
 import { combineReducers } from 'redux';
-import fuelSavingsAppState from './fuelSavings';
+import grid from './grid';
+import data from './data';
 
 const rootReducer = combineReducers({
-  fuelSavingsAppState
+  grid,
+  data
 });
 
 export default rootReducer;

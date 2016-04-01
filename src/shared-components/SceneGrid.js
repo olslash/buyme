@@ -2,7 +2,7 @@ import { map, takeWhile, drop, range, sum } from 'lodash';
 import React from 'react';
 
 import { PropTypes } from 'helpers/react';
-const { string, number, shape, arrayOf, bool } = PropTypes;
+const { string, number, shape, arrayOf, bool, func } = PropTypes;
 
 import PaperImage from 'shared-components/PaperImage';
 
@@ -48,11 +48,16 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
 }
 
 export default function SceneGrid({
-  sceneImage, sceneNeighborRows = 2, imagePool = [], width, margin = 10, sceneLeft, extraRowsIdealHeight = 150
+  onItemClick, sceneImage, sceneNeighborRows = 2, imagePool = [], width, margin = 10,
+  sceneLeft, extraRowsIdealHeight = 150, fullScene
 }) {
+  console.log('oh god')
   const containerWidth = width - 1; // stay 1 pixel away from the edge to prevent browser reflow bugs.
-  let remainingImages = [...imagePool];
+  if (fullScene) {
+    sceneNeighborRows = 0;
+  }
 
+  let remainingImages = [...imagePool];
   const idealRowHeight = sceneImage.height / sceneNeighborRows;
 
   const neighborRows = range(sceneNeighborRows).map(_ => {
@@ -64,9 +69,10 @@ export default function SceneGrid({
 
   const combinedNeighborRowHeight = sum(map(neighborRows, 'height'));
   const sceneAspectRatio = aspectRatio(sceneImage);
-  const scaledSceneWidth = combinedNeighborRowHeight * sceneAspectRatio;
-  const fullCombinedWidth = scaledSceneWidth + containerWidth; // neighbor rows use full container width
-
+  const scaledSceneWidth = (combinedNeighborRowHeight || sceneImage.height) * sceneAspectRatio;
+  // neighbor rows initial layout uses full container width, or 0 if there are no neighbor rows
+  const neighborRowUnscaledWidth = (sceneNeighborRows > 0 ? containerWidth : 0);
+  const fullCombinedWidth = scaledSceneWidth + neighborRowUnscaledWidth;
   // what percentage smaller does the combined width of scene + neighbors need to be, to fit in the container width?
   const scaleFactor = containerWidth / fullCombinedWidth;
 
@@ -144,16 +150,17 @@ export default function SceneGrid({
 const imagePropType = shape({
   height: number,
   src: string,
-  type: string,
   width: number
 });
 
 SceneGrid.propTypes = {
+  onItemClick: func,
   sceneImage: imagePropType,
   sceneNeighborRows: number,
   imagePool: arrayOf(imagePropType),
   width: number,
   extraRowsIdealHeight: number,
   margin: number,
-  sceneLeft: bool
+  sceneLeft: bool,
+  fullScene: bool
 };

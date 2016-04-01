@@ -5,15 +5,22 @@ import webpack from 'webpack';
 import path from 'path';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 
+import frontendDevEnv from './src/env/dev';
+import frontendProdEnv from './src/env/prod';
+
 const developmentEnvironment = 'development' ;
 const productionEnvironment = 'production';
 const testEnvironment = 'test';
 
 const getPlugins = function (env) {
-  const GLOBALS = {
+  let GLOBALS = {
     'process.env.NODE_ENV': JSON.stringify(env),
     __DEV__: env === developmentEnvironment
   };
+
+  GLOBALS = env === developmentEnvironment
+   ? { ...GLOBALS, ...frontendDevEnv }
+   : { ...GLOBALS, ...frontendProdEnv };
 
   const plugins = [
     new webpack.optimize.OccurenceOrderPlugin(),
