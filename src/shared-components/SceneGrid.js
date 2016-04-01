@@ -1,5 +1,6 @@
 import { map, takeWhile, drop, range, sum } from 'lodash';
 import React from 'react';
+import shouldPureComponentUpdate from 'react-pure-render/function';
 
 import { PropTypes } from 'helpers/react';
 const { string, number, shape, arrayOf, bool, func } = PropTypes;
@@ -47,120 +48,131 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
   };
 }
 
-export default function SceneGrid({
-  onItemClick, sceneImage, sceneNeighborRows = 2, imagePool = [], width, margin = 10,
-  sceneLeft, extraRowsIdealHeight = 150, fullScene
-}) {
-  console.log('oh god')
-  const containerWidth = width - 1; // stay 1 pixel away from the edge to prevent browser reflow bugs.
-  if (fullScene) {
-    sceneNeighborRows = 0;
-  }
-
-  let remainingImages = [...imagePool];
-  const idealRowHeight = sceneImage.height / sceneNeighborRows;
-
-  const neighborRows = range(sceneNeighborRows).map(_ => {
-    const { images, height } = balancedRow(remainingImages, idealRowHeight, containerWidth);
-    remainingImages = drop(remainingImages, images.length);
-
-    return { images, height };
-  });
-
-  const combinedNeighborRowHeight = sum(map(neighborRows, 'height'));
-  const sceneAspectRatio = aspectRatio(sceneImage);
-  const scaledSceneWidth = (combinedNeighborRowHeight || sceneImage.height) * sceneAspectRatio;
-  // neighbor rows initial layout uses full container width, or 0 if there are no neighbor rows
-  const neighborRowUnscaledWidth = (sceneNeighborRows > 0 ? containerWidth : 0);
-  const fullCombinedWidth = scaledSceneWidth + neighborRowUnscaledWidth;
-  // what percentage smaller does the combined width of scene + neighbors need to be, to fit in the container width?
-  const scaleFactor = containerWidth / fullCombinedWidth;
-
-  const finalSceneImageWidth = scaledSceneWidth * scaleFactor || 0;
-  const finalSceneImageHeight = (scaledSceneWidth / aspectRatio(sceneImage)) * scaleFactor || 0;
-
-  return (
-    <div style={ { 'lineHeight': 0, 'marginBottom': 20 } }>
-      <div className="scene-image">
-        <PaperImage style={ { float: sceneLeft ? 'left' : 'right' } }
-                    margin={ margin }
-                    height={ finalSceneImageHeight }
-                    width={ finalSceneImageWidth }
-                    src={ sceneImage.src }
-        />
-      </div>
-
-      <div>
-        {
-          neighborRows.map(({ images, height }, i) => (
-            <div key={ i }>
-              {
-                images.map(image => {
-                  const imageHeight = height * scaleFactor;
-                  const imageAspectRatio = aspectRatio(image);
-                  const imageWidth = imageAspectRatio * height * scaleFactor;
-
-                  return (
-                    <PaperImage margin={ margin }
-                                height={ imageHeight }
-                                width={ imageWidth }
-                                src={ image.src }
-                                key={ image.src }
-                    />
-                  );
-                })
-              }
-            </div>
-          ))
-        }
-      </div>
-      <div style={ { marginTop: 5 } }>
-        { /* margin required to prevent row above interfering with layout */ }
-        {
-          range(remainingImages.length).map((i) => {
-            if (remainingImages.length === 0) {
-              // will be filtered out so we don't get extra divs
-              return null;
-            }
-
-            const { images, height } = balancedRow(remainingImages, extraRowsIdealHeight, containerWidth);
-            remainingImages = drop(remainingImages, images.length);
-
-            return (
-              <div key={ i }>
-                {
-                  images.map(image => (
-                    <PaperImage src={ image.src }
-                                height={ height }
-                                width={ aspectRatio(image) * height }
-                                margin={ margin }
-                                key={ image.src }
-                    />
-                  ))
-                }
-              </div>
-            );
-          }).filter(Boolean)
-        }
-      </div>
-    </div>
-  );
-}
-
 const imagePropType = shape({
   height: number,
   src: string,
   width: number
 });
 
-SceneGrid.propTypes = {
-  onItemClick: func,
-  sceneImage: imagePropType,
-  sceneNeighborRows: number,
-  imagePool: arrayOf(imagePropType),
-  width: number,
-  extraRowsIdealHeight: number,
-  margin: number,
-  sceneLeft: bool,
-  fullScene: bool
-};
+
+export default class SceneGrid extends React.Component {
+  static propTypes = {
+    onItemClick: func,
+    sceneImage: imagePropType,
+    sceneNeighborRows: number,
+    imagePool: arrayOf(imagePropType),
+    width: number,
+    extraRowsIdealHeight: number,
+    margin: number,
+    sceneLeft: bool,
+    fullScene: bool
+  };
+
+  static defaultProps = {
+    sceneNeighborRows: 2,
+    imagePool: [],
+    margin: 10,
+    extraRowsIdealHeight: 150
+  };
+
+  shouldComponentUpdate = shouldPureComponentUpdate;
+
+  render() {
+    const containerWidth = this.props.width - 1; // stay 1 pixel away from the edge to prevent browser reflow bugs.
+
+    let { sceneNeighborRows } = this.props;
+
+    if (this.props.fullScene) {
+      sceneNeighborRows = 0;
+    }
+
+    let remainingImages = [...this.props.imagePool];
+    const idealRowHeight = this.props.sceneImage.height / sceneNeighborRows;
+    const neighborRows = this.neighborRows = range(sceneNeighborRows).map(_ => {
+      const { images, height } = balancedRow(remainingImages, idealRowHeight, containerWidth);
+      remainingImages = drop(remainingImages, images.length);
+
+      return { images, height };
+    });
+
+
+    const combinedNeighborRowHeight = sum(map(neighborRows, 'height'));
+    const sceneAspectRatio = aspectRatio(this.props.sceneImage);
+    const scaledSceneWidth = (combinedNeighborRowHeight || this.props.sceneImage.height) * sceneAspectRatio;
+    // neighbor rows initial layout uses full container width, or 0 if there are no neighbor rows
+    const neighborRowUnscaledWidth = (sceneNeighborRows > 0 ? containerWidth : 0);
+    const fullCombinedWidth = scaledSceneWidth + neighborRowUnscaledWidth;
+    // what percentage smaller does the combined width of scene + neighbors need to be, to fit in the container width?
+    const scaleFactor = containerWidth / fullCombinedWidth;
+
+    const finalSceneImageWidth = scaledSceneWidth * scaleFactor || 0;
+    const finalSceneImageHeight = (scaledSceneWidth / aspectRatio(this.props.sceneImage)) * scaleFactor || 0;
+
+    return (
+      <div style={ { 'lineHeight': 0, 'marginBottom': 20 } }>
+        <div className="scene-image">
+          <PaperImage style={ { float: this.props.sceneLeft ? 'left' : 'right' } }
+                      margin={ this.props.margin }
+                      height={ finalSceneImageHeight }
+                      width={ finalSceneImageWidth }
+                      src={ this.props.sceneImage.src }
+          />
+        </div>
+
+        <div>
+          {
+            neighborRows.map(({ images, height }, i) => (
+              <div key={ i }>
+                {
+                  images.map(image => {
+                    const imageHeight = height * scaleFactor;
+                    const imageAspectRatio = aspectRatio(image);
+                    const imageWidth = imageAspectRatio * height * scaleFactor;
+
+                    return (
+                      <PaperImage margin={ this.props.margin }
+                                  height={ imageHeight }
+                                  width={ imageWidth }
+                                  src={ image.src }
+                                  key={ image.src }
+                      />
+                    );
+                  })
+                }
+              </div>
+            ))
+          }
+        </div>
+        <div style={ { marginTop: 5 } }>
+          { /* margin required to prevent row above interfering with layout */ }
+          {
+            range(remainingImages.length).map((i) => {
+              if (remainingImages.length === 0) {
+                // will be filtered out so we don't get extra divs
+                return null;
+              }
+
+              const { images, height } = balancedRow(remainingImages, this.props.extraRowsIdealHeight, containerWidth);
+              remainingImages = drop(remainingImages, images.length);
+
+              return (
+                <div key={ i }>
+                  {
+                    images.map(image => (
+                      <PaperImage src={ image.src }
+                                  height={ height }
+                                  width={ aspectRatio(image) * height }
+                                  margin={ this.props.margin }
+                                  key={ image.src }
+                      />
+                    ))
+                  }
+                </div>
+              );
+            }).filter(Boolean)
+          }
+        </div>
+      </div>
+    );
+  }
+}
