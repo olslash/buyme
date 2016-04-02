@@ -17,14 +17,17 @@ export function fetchData(type, options = {}) {
 
 function fetchProducts({ offset = 0, limit = 10 }) {
   const fakeDelay = random(0, 1, true);
-  const url = makeApiUrl('products', { offset, limit });
+
+  const fake_api_params_fixme = { _start: offset, _limit: limit };
+  const url = makeApiUrl('products', fake_api_params_fixme);
 
   return new Promise((resolve, reject) => setTimeout(async () => {
     const res = await fetch(url);
     const json = await res.json();
-    res.headers.forEach(header => console.log(header))
 
-    return json
+    const total = res.headers.get('X-Total-Count');
+
+    resolve({ response: json, total: Number(total) });
   }, fakeDelay * 1000));
 }
 

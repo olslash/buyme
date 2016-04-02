@@ -1,31 +1,40 @@
+// import Immutable from 'immutable';
 import { createAction, handleActions } from 'redux-actions';
-import { createSelector } from 'reselect';
+// import { createSelector } from 'reselect';
+import { transform } from 'lodash';
 
 
 import * as api from 'helpers/api';
-import { updateSparseArray } from 'helpers/immutable';
+// import { updateSparseArray } from 'helpers/immutable';
 
 const initialState = {
-  products: []
-};
 
-const handleFetchData = {
-  next(state, action) {
-    const { type, offset } = action.meta;
-
-    return {
-      ...state,
-      [type]: updateSparseArray(state[type], action.payload, offset)
-    };
-  },
-  throw(state, action) {
-    // todo
-    return state;
-  }
 };
 
 export default handleActions({
-  FETCH_DATA: handleFetchData
+  FETCH_DATA: {
+    next(state, action) {
+      const { type, offset } = action.meta;
+      const { response, total } = action.payload;
+
+      return {
+        ...state,
+        [type]: {
+          items: transform(response, (acc, val, i) => {
+            acc[i + offset] = val;
+          }, state[type] && state[type].items || {}),
+          // items: (state[type].items || Immutable.Map()).withMutations(map => {
+          // response.forEach((item, i) => map.set(i + offset, item));
+          // }),
+          meta: { total }
+        }
+      };
+    },
+    throw(state, action) {
+      // todo
+      return state;
+    }
+  }
 }, initialState);
 
 function local(state) {
@@ -33,12 +42,11 @@ function local(state) {
 }
 
 // selectors
-export const selectProducts = (state, options) => {
-  const { offset = 0, limit } = options;
+export const selectData = (state, options) => {
+  const { offset = 0, limit, type } = options;
 
-
-  return local(state).products
-    .slice(offset, limit && offset + limit);
+  return local(state)[type];
+    // .slice(offset, limit && offset + limit);
 };
 
 // export const selectData = (state, type, options) => {

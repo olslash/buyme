@@ -16,18 +16,15 @@ export default class GridPage extends React.Component {
 
           <WidthProvider>
             <VirtualScroll
-              overscanRowsCount={ 100 }
+              overscanRowsCount={ 0 }
               height={ 1000 }
               rowsCount={ 20 }
-              rowHeight={ 1000 }
+              rowHeight={ 750 }
               rowRenderer={ i => (
                 <div className="col-1-1">
-                  <WidthProvider>
-                    <SceneGrid sceneImage={ images[4] }
-                               sceneNeighborRows={ 2 }
-                               imagePool={ [...images, ...images, ...images] }
-                    />
-                  </WidthProvider>
+                  <DataProvider type="products">
+                    <PrintProps/>
+                  </DataProvider>
                 </div>
               )}
             />
@@ -36,6 +33,17 @@ export default class GridPage extends React.Component {
     );
   }
 }
+
+
+// {
+  /*<WidthProvider>
+   <SceneGrid sceneImage={ images[4] }
+   sceneNeighborRows={ 2 }
+   imagePool={ images }
+   />
+   </WidthProvider>*/
+// }
+
 
 // (<SceneGrid sceneImage={ images[4] }
 //             sceneNeighborRows={ 2 }

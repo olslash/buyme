@@ -1,15 +1,20 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import shouldPureComponentUpdate from 'react-pure-render/function';
-import { omit } from 'lodash';
+import { get, omit, range } from 'lodash';
 
 import { selectData, fetchData }from 'modules/data';
 import { PropTypes, injectInto } from 'helpers/react';
-const { oneChild, number, string, func } = PropTypes;
+const { oneChild, number, string, func, arrayOf, any } = PropTypes;
 
-@connect((state, ownProps) => ({
-  data: selectData(state, ownProps.type, ownProps)
-}), {
+@connect((state, ownProps) => {
+  const data = selectData(state, ownProps);
+
+  return {
+    items: get(data, 'items', []),
+    total: get(data, 'meta.total', Infinity)
+  };
+}, {
   fetchData
 })
 export default class DataProvider extends React.Component {
@@ -19,6 +24,8 @@ export default class DataProvider extends React.Component {
     offset: number,
     children: oneChild,
 
+    items: arrayOf(any),
+    total: number,
     fetchData: func
   };
 
@@ -38,20 +45,24 @@ export default class DataProvider extends React.Component {
   }
 
   shouldComponentFetchData() {
-    // todo: check if all data exists in range of offset/limit
-    // return find(this.props.data, isUndefined);
-    return true;
+    // check if all data exists
+    const { offset, limit, items, total } = this.props;
+
+    const allDataAvailable = range(offset, Math.min(offset + (limit - 1), total - 1))
+      .every(i => !!items[i]);
+
+    return !allDataAvailable;
   }
 
   _fetchData() {
     if (this.shouldComponentFetchData()) {
-      this.props.fetchData(this.props.type, this.props);
+      return this.props.fetchData(this.props.type, this.props);
     }
   }
 
   render() {
     const injectedChild = injectInto(this.props.children, {
-      test: true
+      data: this.props.items
     });
 
     return React.Children.only(injectedChild[0]);
