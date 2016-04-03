@@ -5,7 +5,7 @@ import { transform, range, values, get } from 'lodash';
 
 import * as api from 'helpers/api';
 
-const status = {
+export const status = {
   LOADING: 'loading',
   FAILED: 'failed'
 };
@@ -76,23 +76,44 @@ function local(state) {
 
 // selectors
 export const selectData = (state, options) => {
-  const { offset = 0, limit, type } = options;
+  const { type } = options;
 
   const data = local(state)[type];
   return data && {
       ...data,
       items: data.items.toJS()
-    } || null;
-    // .slice(offset, limit && offset + limit);
+    };
 };
 
+// actions
 const setLoading = createAction('SET_LOADING', (type, options) => {
   return {
     type, options
   };
 });
 
-export const fetchData = (type, options) => ([
+export const fetchDataIfNeeded = (type, options = {}) => (dispatch, getState) => {
+  const data = selectData(getState(), options);
+
+  if(shouldFetchData(data, options)) {
+    dispatch(fetchData(type, options));
+  }
+};
+
+const shouldFetchData = (existingData = {}, options = {}) => {
+  // check if all data exists
+  const { offset, limit } = options;
+  const { data = {}, total = Infinity } = existingData;
+
+  const allDataAvailable = range(
+    offset,
+    Math.min(offset + (limit - 1), total - 1)
+  ).every(i => !!data[i]);
+
+  return !allDataAvailable;
+};
+
+const fetchData = (type, options) => ([
   setLoading(type, options),
   _fetchData(type, options)
   // setLoading(false, type, options)

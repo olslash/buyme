@@ -15,7 +15,7 @@ export function fetchData(type, options = {}) {
   }
 }
 
-function fetchProducts({ offset = 0, limit = 10 }) {
+function fetchProducts({ offset = 0, limit = -1 }) {
   const fakeDelay = random(0, 1, true);
 
   const fake_api_params_fixme = { _start: offset, _limit: limit };

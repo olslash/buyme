@@ -57,15 +57,19 @@ const imagePropType = shape({
 
 export default class SceneGrid extends React.Component {
   static propTypes = {
-    onItemClick: func,
-    sceneImage: imagePropType,
+
+    // sceneImage: imagePropType,
+    // imagePool: arrayOf(imagePropType),
+    data: shape({
+
+    }),
     sceneNeighborRows: number,
-    imagePool: arrayOf(imagePropType),
     width: number,
     extraRowsIdealHeight: number,
     margin: number,
     sceneLeft: bool,
-    fullScene: bool
+    fullScene: bool,
+    onItemClick: func
   };
 
   static defaultProps = {

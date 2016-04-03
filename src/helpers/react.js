@@ -15,6 +15,7 @@ export const PropTypes = {
     ...ImmutablePropTypes
   },
   children: ReactPropTypes.node,
-  oneChild: ReactPropTypes.element
+  oneChild: ReactPropTypes.element,
+  status: ReactPropTypes.oneOf(['loading', 'failed'])
 };
 
