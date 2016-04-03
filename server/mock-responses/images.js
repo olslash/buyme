@@ -4,14 +4,14 @@ const imageResponse = {
       sceneImage: {
         height: 788,
         width: 1400,
-        src: 'file:///Users/mrobb/Dev/JS/buyme/src/static/images/hero_vertex.jpg'
+        src: 'http://localhost:8080/hero_vertex.jpg'
       },
       components: [
         {
           image: {
             height: 1000,
             width: 1000,
-            src: 'file:///Users/mrobb/Dev/JS/buyme/src/static/images/cassette.jpg'
+            src: 'http://localhost:8080/cassette.jpg'
           },
           meta: {
             title: 'SRAM PG-1231 Cassette',
@@ -25,7 +25,7 @@ const imageResponse = {
           image: {
             height: 840,
             width: 560,
-            src: 'file:///Users/mrobb/Dev/JS/buyme/src/static/images/crank-next.jpg'
+            src: 'http://localhost:8080/crank-next.jpg'
           },
           meta: {
             title: 'NEXT crank',
@@ -39,7 +39,7 @@ const imageResponse = {
           image: {
             height: 994,
             width: 780,
-            src: 'file:///Users/mrobb/Dev/JS/buyme/src/static/images/fork-pike.jpg'
+            src: 'http://localhost:8080/fork-pike.jpg'
           },
           meta: {
             title: 'RS Pike fork',
@@ -53,7 +53,7 @@ const imageResponse = {
           image: {
             height: 1200,
             width: 1200,
-            src: 'file:///Users/mrobb/Dev/JS/buyme/src/static/images/pedals-xtr-trail.jpg'
+            src: 'http://localhost:8080/pedals-xtr-trail.jpg'
           },
           meta: {
             title: 'Shimano XTR Trail Pedals',
@@ -67,7 +67,7 @@ const imageResponse = {
           image: {
             height: 663,
             width: 950,
-            src: 'file:///Users/mrobb/Dev/JS/buyme/src/static/images/saddle.jpg'
+            src: 'http://localhost:8080/saddle.jpg'
           },
           meta: {
             title: 'Some saddle 123',
@@ -81,7 +81,7 @@ const imageResponse = {
           image: {
             height: 1000,
             width: 1000,
-            src: 'file:///Users/mrobb/Dev/JS/buyme/src/static/images/shock-monarch.jpg'
+            src: 'http://localhost:8080/shock-monarch.jpg'
           },
           meta: {
             title: 'RS Monarch shock',
@@ -95,7 +95,7 @@ const imageResponse = {
           image: {
             height: 500,
             width: 430,
-            src: 'file:///Users/mrobb/Dev/JS/buyme/src/static/images/wheels-mtb.jpg'
+            src: 'http://localhost:8080/wheels-mtb.jpg'
           },
           meta: {
             title: 'Stans Wheelset 29er',
