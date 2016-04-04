@@ -57,12 +57,8 @@ const imagePropType = shape({
 
 export default class SceneGrid extends React.Component {
   static propTypes = {
-
-    // sceneImage: imagePropType,
-    // imagePool: arrayOf(imagePropType),
-    data: shape({
-
-    }),
+    sceneImage: imagePropType,
+    imagePool: arrayOf(imagePropType),
     sceneNeighborRows: number,
     width: number,
     extraRowsIdealHeight: number,
@@ -80,6 +76,13 @@ export default class SceneGrid extends React.Component {
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
+
+  _height = 0;
+
+  getHeight() {
+    // return this.refs.container && this.refs.container.offsetHeight;
+    return this._height;
+  }
 
   render() {
     const containerWidth = this.props.width - 1; // stay 1 pixel away from the edge to prevent browser reflow bugs.
@@ -110,10 +113,10 @@ export default class SceneGrid extends React.Component {
     const scaleFactor = containerWidth / fullCombinedWidth;
 
     const finalSceneImageWidth = scaledSceneWidth * scaleFactor || 0;
-    const finalSceneImageHeight = (scaledSceneWidth / aspectRatio(this.props.sceneImage)) * scaleFactor || 0;
+    const finalSceneImageHeight = this._height = (scaledSceneWidth / aspectRatio(this.props.sceneImage)) * scaleFactor || 0;
 
     return (
-      <div style={ { 'lineHeight': 0, 'marginBottom': 20 } }>
+      <div style={ { 'lineHeight': 0, 'marginBottom': 20 } } ref="container">
         <div className="scene-image">
           <PaperImage style={ { float: this.props.sceneLeft ? 'left' : 'right' } }
                       margin={ this.props.margin }

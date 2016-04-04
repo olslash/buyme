@@ -40,8 +40,7 @@ export default handleActions({
 
   SET_LOADING: {
     next(state, action) {
-      const { type, options } = action.payload;
-      const { offset, limit } = options;
+      const { type, offset, limit } = action.payload;
       const totalAvailableItems = get(state, [type, 'meta', 'total'], Infinity);
       // limit may easily ask for more data than exists on the server
       // how do we avoid setting Loading state on data that can never exist?
@@ -77,8 +76,8 @@ function local(state) {
 // selectors
 export const selectData = (state, options) => {
   const { type } = options;
-
   const data = local(state)[type];
+
   return data && {
       ...data,
       items: data.items.toJS()
@@ -86,22 +85,17 @@ export const selectData = (state, options) => {
 };
 
 // actions
-const setLoading = createAction('SET_LOADING', (type, options) => {
-  return {
-    type, options
-  };
-});
-
-export const fetchDataIfNeeded = (type, options = {}) => (dispatch, getState) => {
+export const fetchDataIfNeeded = (options = {}) => (dispatch, getState) => {
   const data = selectData(getState(), options);
 
   if(shouldFetchData(data, options)) {
-    dispatch(fetchData(type, options));
+    dispatch(fetchData(options));
   }
 };
 
 const shouldFetchData = (existingData = {}, options = {}) => {
   // check if all data exists
+  // todo: check failed status and count that as not existing
   const { offset, limit } = options;
   const { data = {}, total = Infinity } = existingData;
 
@@ -113,13 +107,13 @@ const shouldFetchData = (existingData = {}, options = {}) => {
   return !allDataAvailable;
 };
 
-const fetchData = (type, options) => ([
-  setLoading(type, options),
-  _fetchData(type, options)
-  // setLoading(false, type, options)
+const fetchData = (options) => ([
+  _setLoading(options),
+  _fetchData(options)
 ]);
 
-const _fetchData = createAction('FETCH_DATA', async (type, options) => {
-  return await api.fetchData(type, options);
-}, (type, options) => options);
+const _fetchData = createAction('FETCH_DATA', async (options) => {
+  return await api.fetchData(options);
+}, (options) => options);
 
+const _setLoading = createAction('SET_LOADING', (options) => options);

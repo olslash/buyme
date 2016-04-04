@@ -6,8 +6,8 @@ export function makeApiUrl(path, queryObj) {
   return `${__ENV__.API_ROOT}/${path}?${params}`;
 }
 
-export function fetchData(type, options = {}) {
-  switch (type) {
+export function fetchData(options = {}) {
+  switch (options.type) {
     case 'products':
       return fetchProducts(options);
     default:

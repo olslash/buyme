@@ -3,9 +3,13 @@ import { connect } from 'react-redux';
 import { VirtualScroll, InfiniteLoader } from 'react-virtualized';
 import { get, map } from 'lodash';
 
-import { selectData, fetchDataIfNeeded as fetchData, status as dataStatus }from 'modules/data';
+import {
+  selectData, fetchDataIfNeeded as fetchData, status as dataStatus
+} from 'modules/data';
 import { PropTypes } from 'helpers/react';
-const { func, number, oneOfType, objectOf, status, object, shape, arrayOf }= PropTypes;
+const {
+  func, number, oneOfType, objectOf, status, object, shape, arrayOf
+} = PropTypes;
 
 // import DataProvider from 'shared-components/DataProvider';
 import WidthProvider from 'shared-components/WidthProvider';
@@ -17,7 +21,7 @@ import SceneGrid from 'shared-components/SceneGrid';
 
 
 @connect((state) => {
-  const data = selectData(state, 'products');
+  const data = selectData(state, { type: 'products' });
 
   return {
     items: get(data, 'items', null),
@@ -39,17 +43,39 @@ export default class GridPage extends React.Component {
     total: number
   };
 
-  componentDidMount() {
-    this.props.fetchData('products', {
+  componentWillMount() {
+    this.props.fetchData({
+      type: 'products',
       offset: 0,
       limit: 10
     });
   }
 
+  componentDidMount() {
+    // this.props.fetchData('products', {
+    //   offset: 0,
+    //   limit: 10
+    // });
+    this._rowRefs.scroller.recomputeRowHeights();
+  }
+
+  componentDidUpdate() {
+    this._rowRefs.scroller.recomputeRowHeights();
+  }
+
+  _rowRefs = {};
+
+  getRowHeight = (i) => {
+    const ref = this._rowRefs[i];
+    return ref && ref.getHeight() || 0;
+  };
+
   _rowRenderer = (i) => {
+    console.log(i)
     const { items } = this.props;
 
     if (!items) return 'no data';
+    console.log('rendering with', items[i])
     if (items[i] === dataStatus.LOADING) return 'loading';
 
     return (
@@ -58,6 +84,7 @@ export default class GridPage extends React.Component {
           <SceneGrid sceneImage={ items[i].sceneImage }
                      sceneNeighborRows={ 3 }
                      imagePool={ map(items[i].components, 'image') }
+                     ref={ (ref) => this._rowRefs[i] = ref }
           />
         </WidthProvider>
       </div>
@@ -65,20 +92,21 @@ export default class GridPage extends React.Component {
   };
 
   render() {
+    console.log(this.props.items)
     return (
       <div className="grid grid-pad">
         <InfiniteLoader isRowLoaded={ () => true }
                         loadMoreRows={ () => true }
-                        rowsCount={ this.props.total }
+                        rowsCount={ this.props.total || Infinity }
         >
           { ({ onRowsRendered, registerChild }) => (
             <WidthProvider>
               <VirtualScroll
                 overscanRowsCount={ 6 }
                 height={ 1000 }
-                rowsCount={ this.props.total }
-                rowHeight={ 750 }
-                ref={ registerChild }
+                rowsCount={ this.props.total || get(this.props.items, 'length', 10) }
+                rowHeight={ this.getRowHeight }
+                ref={ (ref) => { registerChild(ref); this._rowRefs.scroller = ref; }  }
                 onRowsRendered={ onRowsRendered }
                 rowRenderer={ this._rowRenderer }
               />
