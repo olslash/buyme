@@ -102,7 +102,6 @@ export default class GridPage extends React.Component {
   };
 
   render() {
-    console.log(this.props.items)
     return (
       <div className="grid grid-pad">
         <InfiniteLoader isRowLoaded={ () => true }
