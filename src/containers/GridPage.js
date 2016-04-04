@@ -43,6 +43,10 @@ export default class GridPage extends React.Component {
     total: number
   };
 
+  state = {
+    rowHeights: {}
+  };
+
   componentWillMount() {
     this.props.fetchData({
       type: 'products',
@@ -52,30 +56,34 @@ export default class GridPage extends React.Component {
   }
 
   componentDidMount() {
-    // this.props.fetchData('products', {
-    //   offset: 0,
-    //   limit: 10
-    // });
-    this._rowRefs.scroller.recomputeRowHeights();
+    this.scroller.recomputeRowHeights();
   }
 
   componentDidUpdate() {
-    this._rowRefs.scroller.recomputeRowHeights();
+    this.scroller.recomputeRowHeights();
   }
 
-  _rowRefs = {};
+  setRowHeight = (i, height) => {
+    if (height !== this.getRowHeight(i)) {
+      this.setState({
+        rowHeights: {
+          ...this.state.rowHeights,
+          [i]: height
+        }
+      });
+    }
+  };
 
   getRowHeight = (i) => {
-    const ref = this._rowRefs[i];
-    return ref && ref.getHeight() || 0;
+    return this.state.rowHeights[i] || 0;
+    // const ref = this._rowRefs[i];
+    // return ref && ref.getHeight() || 0;
   };
 
   _rowRenderer = (i) => {
-    console.log(i)
     const { items } = this.props;
 
     if (!items) return 'no data';
-    console.log('rendering with', items[i])
     if (items[i] === dataStatus.LOADING) return 'loading';
 
     return (
@@ -84,7 +92,9 @@ export default class GridPage extends React.Component {
           <SceneGrid sceneImage={ items[i].sceneImage }
                      sceneNeighborRows={ 3 }
                      imagePool={ map(items[i].components, 'image') }
-                     ref={ (ref) => this._rowRefs[i] = ref }
+                     onHeightCalculated={ this.setRowHeight }
+                     id={ i }
+                     // ref={ (ref) => this._rowRefs[i] = ref }
           />
         </WidthProvider>
       </div>
@@ -106,7 +116,7 @@ export default class GridPage extends React.Component {
                 height={ 1000 }
                 rowsCount={ this.props.total || get(this.props.items, 'length', 10) }
                 rowHeight={ this.getRowHeight }
-                ref={ (ref) => { registerChild(ref); this._rowRefs.scroller = ref; }  }
+                ref={ (ref) => { registerChild(ref); this.scroller = ref; }  }
                 onRowsRendered={ onRowsRendered }
                 rowRenderer={ this._rowRenderer }
               />

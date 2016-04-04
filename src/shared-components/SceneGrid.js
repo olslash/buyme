@@ -3,7 +3,7 @@ import React from 'react';
 import shouldPureComponentUpdate from 'react-pure-render/function';
 
 import { PropTypes } from 'helpers/react';
-const { string, number, shape, arrayOf, bool, func } = PropTypes;
+const { string, number, shape, arrayOf, bool, func, oneOfType } = PropTypes;
 
 import PaperImage from 'shared-components/PaperImage';
 
@@ -65,7 +65,9 @@ export default class SceneGrid extends React.Component {
     margin: number,
     sceneLeft: bool,
     fullScene: bool,
-    onItemClick: func
+    id: oneOfType([string, number]),
+    onItemClick: func,
+    onHeightCalculated: func
   };
 
   static defaultProps = {
@@ -77,11 +79,12 @@ export default class SceneGrid extends React.Component {
 
   shouldComponentUpdate = shouldPureComponentUpdate;
 
-  _height = 0;
+  componentDidUpdate() {
+    this.props.onHeightCalculated(this.props.id, this.getHeight());
+  }
 
   getHeight() {
-    // return this.refs.container && this.refs.container.offsetHeight;
-    return this._height;
+    return this.refs.container && this.refs.container.scrollHeight;
   }
 
   render() {
@@ -113,10 +116,13 @@ export default class SceneGrid extends React.Component {
     const scaleFactor = containerWidth / fullCombinedWidth;
 
     const finalSceneImageWidth = scaledSceneWidth * scaleFactor || 0;
-    const finalSceneImageHeight = this._height = (scaledSceneWidth / aspectRatio(this.props.sceneImage)) * scaleFactor || 0;
+    const finalSceneImageHeight = (scaledSceneWidth / aspectRatio(this.props.sceneImage)) * scaleFactor || 0;
 
     return (
-      <div style={ { 'lineHeight': 0, 'marginBottom': 20 } } ref="container">
+      <div style={ { 'lineHeight': 0, 'marginBottom': 20 } }
+           className="clearfix"
+           ref="container"
+      >
         <div className="scene-image">
           <PaperImage style={ { float: this.props.sceneLeft ? 'left' : 'right' } }
                       margin={ this.props.margin }
