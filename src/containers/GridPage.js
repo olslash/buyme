@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { VirtualScroll, InfiniteLoader } from 'react-virtualized';
-import { get, map } from 'lodash';
+import shouldPureComponentUpdate from 'react-pure-render/function';
+import { get, map, debounce } from 'lodash';
 
 import {
   selectData, fetchDataIfNeeded as fetchData, status as dataStatus
@@ -56,8 +57,10 @@ export default class GridPage extends React.Component {
   }
 
   componentDidMount() {
-    this.scroller.recomputeRowHeights();
+    debounce(this.scroller.recomputeRowHeights, 250);
   }
+
+  shouldComponentUpdate = shouldPureComponentUpdate;
 
   componentDidUpdate() {
     this.scroller.recomputeRowHeights();
