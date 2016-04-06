@@ -42,6 +42,7 @@ export default function PaperImage({
   const PaperImage = (
     <Paper zDepth={ zDepth }
            style={ paperStyle }
+           transitionEnabled={ false }
     >
       <img height={ marginHeight }
            width={ marginWidth }
