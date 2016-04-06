@@ -64,7 +64,9 @@ const imagePropType = shape({
 export default class SceneGrid extends React.Component {
   static propTypes = {
     sceneImage: imagePropType,
-    imagePool: arrayOf(imagePropType),
+    imagePool: arrayOf(shape({
+      image: imagePropType
+    })),
     sceneNeighborRows: number,
     width: number,
     extraRowsIdealHeight: number,
@@ -84,6 +86,10 @@ export default class SceneGrid extends React.Component {
   };
 
   shouldComponentUpdate = shouldPureComponentUpdate;
+
+  componentDidMount() {
+    this.props.onHeightCalculated(this.props.id, this.getHeight());
+  }
 
   componentDidUpdate() {
     this.props.onHeightCalculated(this.props.id, this.getHeight());
@@ -141,7 +147,7 @@ export default class SceneGrid extends React.Component {
       sceneNeighborRows = 0;
     }
 
-    let remainingImages = [...this.props.imagePool];
+    let remainingImages = [...map(this.props.imagePool, 'image')];
     const idealRowHeight = this.props.sceneImage.height / sceneNeighborRows;
     const neighborRows = this.neighborRows = range(sceneNeighborRows).map(_ => {
       const { images, height } = balancedRow(remainingImages, idealRowHeight, containerWidth);

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { VirtualScroll, InfiniteLoader, AutoSizer } from 'react-virtualized';
 import shouldPureComponentUpdate from 'react-pure-render/function';
-import { partial, get, map, debounce, isEmpty } from 'lodash';
+import { partial, get, set, map, debounce, isEmpty } from 'lodash';
 
 import {
   selectData, fetchDataIfNeeded as fetchData, status as dataStatus
@@ -68,12 +68,16 @@ export default class GridPage extends React.Component {
 
   setRowHeight = (i, height) => {
     if (height !== this.getRowHeight(i)) {
-      this.setState({
-        rowHeights: {
-          ...this.state.rowHeights,
-          [i]: height
-        }
-      });
+      // this.setState({
+      //   rowHeights: set(this.state.rowHeights, i, height)
+      //   // rowHeights: {
+      //   //   ...this.state.rowHeights,
+      //   //   [i]: height
+      //   // }
+      // });
+      // fixme -- commented-out approach doesn't work when react batches setState calls
+      set(this.state.rowHeights, i, height);
+      this.forceUpdate();
     }
   };
 
@@ -106,7 +110,7 @@ export default class GridPage extends React.Component {
     return (
         <SceneGrid sceneImage={ items[i].sceneImage }
                    sceneNeighborRows={ 1 }
-                   imagePool={ map(items[i].components, 'image') }
+                   imagePool={ items[i].components }
                    onHeightCalculated={ this.setRowHeight }
                    width={ width }
                    id={ i }
