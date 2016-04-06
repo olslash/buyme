@@ -116,22 +116,22 @@ export default class GridPage extends React.Component {
 
   render() {
     return (
-      <div className="grid grid-pad">
+      <div className="grid grid-pad" style={ { paddingTop: 0 } }>
         <div className="col-1-1">
-          <div className="content">
+          <div className="content" style={ { height: '100vh' } }>
             <InfiniteLoader isRowLoaded={ this.isRowLoaded }
                             loadMoreRows={ this.loadMoreRows }
                             rowsCount={ this.props.total || Infinity }
             >
               { ({ onRowsRendered, registerChild }) => (
-                <AutoSizer disableHeight>
+                <AutoSizer>
                   { ({ width, height }) => (
                     <VirtualScroll
                       // fixme -- should be possible to remove this partial
                       rowRenderer={ partial(this._rowRenderer, width) }
                       onRowsRendered={ onRowsRendered }
                       width={ width }
-                      height={ 600 }
+                      height={ height }
                       rowHeight={ this.getRowHeight }
                       rowsCount={ this.props.total || get(this.props.items, 'length', 1) }
                       overscanRowsCount={ 2 }
