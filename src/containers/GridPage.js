@@ -129,7 +129,7 @@ export default class GridPage extends React.Component {
                       height={ height }
                       rowHeight={ this.getRowHeight }
                       rowsCount={ this.props.total || get(this.props.items, 'length', 1) }
-                      overscanRowsCount={ 2 }
+                      overscanRowsCount={ 10 }
                       ref={ (ref) => { registerChild(ref); this.scroller = ref; }  }
                     />
                   ) }
