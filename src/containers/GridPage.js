@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { VirtualScroll, InfiniteLoader } from 'react-virtualized';
+import { VirtualScroll, InfiniteLoader, AutoSizer } from 'react-virtualized';
 import shouldPureComponentUpdate from 'react-pure-render/function';
-import { get, map, debounce } from 'lodash';
+import { get, map, debounce, isEmpty } from 'lodash';
 
 import {
   selectData, fetchDataIfNeeded as fetchData, status as dataStatus
@@ -25,7 +25,7 @@ import SceneGrid from 'shared-components/SceneGrid';
   const data = selectData(state, { type: 'products' });
 
   return {
-    items: get(data, 'items', null),
+    items: get(data, 'items', {}),
     total: get(data, 'meta.total', 0)
   };
 }, {
@@ -52,7 +52,7 @@ export default class GridPage extends React.Component {
     this.props.fetchData({
       type: 'products',
       offset: 0,
-      limit: 10
+      limit: 6
     });
   }
 
@@ -78,28 +78,43 @@ export default class GridPage extends React.Component {
   };
 
   getRowHeight = (i) => {
-    return this.state.rowHeights[i] || 0;
+    return this.state.rowHeights[i] || 20;
+
     // const ref = this._rowRefs[i];
     // return ref && ref.getHeight() || 0;
+  };
+
+  isRowLoaded = (i) => {
+    return this.props.items[i] || this.props.items[i] === dataStatus.LOADING;
+  };
+
+  loadMoreRows = ({ startIndex, stopIndex }) => {
+    return this.props.fetchData({
+      type: 'products',
+      offset: startIndex,
+      limit: stopIndex - startIndex
+    });
   };
 
   _rowRenderer = (i) => {
     const { items } = this.props;
 
-    if (!items) return 'no data';
+    if (isEmpty(items)) return 'no data';
     if (items[i] === dataStatus.LOADING) return 'loading';
 
     return (
       <div className="col-1-1">
-        <WidthProvider>
-          <SceneGrid sceneImage={ items[i].sceneImage }
-                     sceneNeighborRows={ 3 }
-                     imagePool={ map(items[i].components, 'image') }
-                     onHeightCalculated={ this.setRowHeight }
-                     id={ i }
-                     // ref={ (ref) => this._rowRefs[i] = ref }
-          />
-        </WidthProvider>
+        <AutoSizer disableHeight>
+          { ({ width }) => (
+            <SceneGrid sceneImage={ items[i].sceneImage }
+                       sceneNeighborRows={ 1 }
+                       imagePool={ map(items[i].components, 'image') }
+                       onHeightCalculated={ this.setRowHeight }
+                       width={ width }
+                       id={ i }
+            />
+          ) }
+        </AutoSizer>
       </div>
     );
   };
@@ -107,22 +122,25 @@ export default class GridPage extends React.Component {
   render() {
     return (
       <div className="grid grid-pad">
-        <InfiniteLoader isRowLoaded={ () => true }
-                        loadMoreRows={ () => true }
+        <InfiniteLoader isRowLoaded={ this.isRowLoaded }
+                        loadMoreRows={ this.loadMoreRows }
                         rowsCount={ this.props.total || Infinity }
         >
           { ({ onRowsRendered, registerChild }) => (
-            <WidthProvider>
-              <VirtualScroll
-                overscanRowsCount={ 6 }
-                height={ 1000 }
-                rowsCount={ this.props.total || get(this.props.items, 'length', 10) }
-                rowHeight={ this.getRowHeight }
-                ref={ (ref) => { registerChild(ref); this.scroller = ref; }  }
-                onRowsRendered={ onRowsRendered }
-                rowRenderer={ this._rowRenderer }
-              />
-            </WidthProvider>
+            <AutoSizer disableHeight>
+              { ({ width, height }) => (
+                <VirtualScroll
+                  rowRenderer={ this._rowRenderer }
+                  onRowsRendered={ onRowsRendered }
+                  width={ width }
+                  height={ 600 }
+                  rowHeight={ this.getRowHeight }
+                  rowsCount={ this.props.total || get(this.props.items, 'length', 1) }
+                  overscanRowsCount={ 2 }
+                  ref={ (ref) => { registerChild(ref); this.scroller = ref; }  }
+                />
+              ) }
+            </AutoSizer>
           ) }
         </InfiniteLoader>
       </div>

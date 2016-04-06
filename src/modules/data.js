@@ -89,7 +89,8 @@ export const fetchDataIfNeeded = (options = {}) => (dispatch, getState) => {
   const data = selectData(getState(), options);
 
   if(shouldFetchData(data, options)) {
-    dispatch(fetchData(options));
+    // just return the fetchData promise, not the array that includes setLoading
+    return dispatch(fetchData(options))[1];
   }
 };
 

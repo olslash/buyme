@@ -32,7 +32,7 @@ export default class WidthProvider extends React.Component {
 
   handleResize = () => {
     this.setState({
-      width: this.node.offsetWidth
+      width: this.node.clientWidth
     });
   };
 

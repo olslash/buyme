@@ -6,12 +6,16 @@ import { PropTypes } from 'helpers/react';
 const { number, string } = PropTypes;
 
 
-export default function PaperImage({ height, width, src, margin = 0, zDepth = 3, style }) {
+export default function PaperImage({
+  src, height, width, top = 0, left = 0, margin = 0, zDepth = 1, style
+}) {
   const marginHeight = height - margin;
   const marginWidth = width - margin;
 
   const baseStyles = {
-    display: 'inline-block'
+    // display: 'inline-block',
+    position: 'absolute',
+    transform: `translate(${left}px,${top}px)`
   };
 
   const marginWrapperStyle = {
@@ -23,7 +27,6 @@ export default function PaperImage({ height, width, src, margin = 0, zDepth = 3,
   };
 
   let paperStyle = {
-    ...baseStyles,
     height: marginHeight,
     width: marginWidth
   };
@@ -32,7 +35,6 @@ export default function PaperImage({ height, width, src, margin = 0, zDepth = 3,
   // (if no margin is specified, this is the <Paper> itself
   if (margin === 0) {
     paperStyle = {
-      ...baseStyles,
       ...style
     };
   }

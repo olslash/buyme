@@ -15,19 +15,14 @@ export function fetchData(options = {}) {
   }
 }
 
-function fetchProducts({ offset = 0, limit = -1 }) {
-  const fakeDelay = random(0, 1, true);
+async function fetchProducts({ offset = 0, limit = -1 }) {
+  const mock_api_params_fixme = { _start: offset, _limit: limit };
+  const url = makeApiUrl('products', mock_api_params_fixme);
 
-  const fake_api_params_fixme = { _start: offset, _limit: limit };
-  const url = makeApiUrl('products', fake_api_params_fixme);
+  const res = await fetch(url);
+  const json = await res.json();
+  const total = res.headers.get('X-Total-Count');
 
-  return new Promise((resolve, reject) => setTimeout(async () => {
-    const res = await fetch(url);
-    const json = await res.json();
-
-    const total = res.headers.get('X-Total-Count');
-
-    resolve({ response: json, total: Number(total) });
-  }, fakeDelay * 1000));
+  return { response: json, total: Number(total) };
 }
 
