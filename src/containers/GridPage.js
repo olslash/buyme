@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { VirtualScroll, InfiniteLoader, AutoSizer } from 'react-virtualized';
 import shouldPureComponentUpdate from 'react-pure-render/function';
-import { get, map, debounce, isEmpty } from 'lodash';
+import { partial, get, map, debounce, isEmpty } from 'lodash';
 
 import {
   selectData, fetchDataIfNeeded as fetchData, status as dataStatus
@@ -96,53 +96,53 @@ export default class GridPage extends React.Component {
     });
   };
 
-  _rowRenderer = (i) => {
+  _rowRenderer = (width, i) => {
     const { items } = this.props;
 
     if (isEmpty(items)) return 'no data';
-    if (items[i] === dataStatus.LOADING) return 'loading';
+    if (items[i] === dataStatus.LOADING) return 'Loading';
+    if (items[i] === dataStatus.FAILED) return 'Failed to load';
 
     return (
-      <div className="col-1-1">
-        <AutoSizer disableHeight>
-          { ({ width }) => (
-            <SceneGrid sceneImage={ items[i].sceneImage }
-                       sceneNeighborRows={ 1 }
-                       imagePool={ map(items[i].components, 'image') }
-                       onHeightCalculated={ this.setRowHeight }
-                       width={ width }
-                       id={ i }
-            />
-          ) }
-        </AutoSizer>
-      </div>
+        <SceneGrid sceneImage={ items[i].sceneImage }
+                   sceneNeighborRows={ 1 }
+                   imagePool={ map(items[i].components, 'image') }
+                   onHeightCalculated={ this.setRowHeight }
+                   width={ width }
+                   id={ i }
+        />
     );
   };
 
   render() {
     return (
       <div className="grid grid-pad">
-        <InfiniteLoader isRowLoaded={ this.isRowLoaded }
-                        loadMoreRows={ this.loadMoreRows }
-                        rowsCount={ this.props.total || Infinity }
-        >
-          { ({ onRowsRendered, registerChild }) => (
-            <AutoSizer disableHeight>
-              { ({ width, height }) => (
-                <VirtualScroll
-                  rowRenderer={ this._rowRenderer }
-                  onRowsRendered={ onRowsRendered }
-                  width={ width }
-                  height={ 600 }
-                  rowHeight={ this.getRowHeight }
-                  rowsCount={ this.props.total || get(this.props.items, 'length', 1) }
-                  overscanRowsCount={ 2 }
-                  ref={ (ref) => { registerChild(ref); this.scroller = ref; }  }
-                />
+        <div className="col-1-1">
+          <div className="content">
+            <InfiniteLoader isRowLoaded={ this.isRowLoaded }
+                            loadMoreRows={ this.loadMoreRows }
+                            rowsCount={ this.props.total || Infinity }
+            >
+              { ({ onRowsRendered, registerChild }) => (
+                <AutoSizer disableHeight>
+                  { ({ width, height }) => (
+                    <VirtualScroll
+                      // fixme -- should be possible to remove this partial
+                      rowRenderer={ partial(this._rowRenderer, width) }
+                      onRowsRendered={ onRowsRendered }
+                      width={ width }
+                      height={ 600 }
+                      rowHeight={ this.getRowHeight }
+                      rowsCount={ this.props.total || get(this.props.items, 'length', 1) }
+                      overscanRowsCount={ 2 }
+                      ref={ (ref) => { registerChild(ref); this.scroller = ref; }  }
+                    />
+                  ) }
+                </AutoSizer>
               ) }
-            </AutoSizer>
-          ) }
-        </InfiniteLoader>
+            </InfiniteLoader>
+          </div>
+        </div>
       </div>
     );
   }

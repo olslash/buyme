@@ -1,3 +1,8 @@
+// ********
+// TODO:
+//   refactor to remove stuff from render
+// ********
+
 import { map, takeWhile, drop, range, sum, get, reduce } from 'lodash';
 import React from 'react';
 import shouldPureComponentUpdate from 'react-pure-render/function';
@@ -123,16 +128,12 @@ export default class SceneGrid extends React.Component {
         </div>
       );
     });
-  }
-
-  renderOverflowRows(overflowRows, scaleFactor) {
-
-  }
+  };
 
   render() {
     let totalHeight = 0;
 
-    const containerWidth = this.props.width - 1; // stay 1 pixel away from the edge to prevent browser reflow bugs.
+    const containerWidth = this.props.width; // stay 1 pixel away from the edge to prevent browser reflow bugs.
 
     let { sceneNeighborRows } = this.props;
 
