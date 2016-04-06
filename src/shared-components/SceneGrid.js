@@ -102,7 +102,7 @@ export default class SceneGrid extends React.Component {
     // return this.refs.container && this.refs.container.scrollHeight;
   }
 
-  renderNeighborRows = (neighborRows, scaleFactor) => {
+  renderNeighborRows = (neighborRows, scaleFactor, sceneImageWidth) => {
     let colHeightToNow = 0;
 
     return neighborRows.map(({ images, height }, coli) => {
@@ -125,7 +125,11 @@ export default class SceneGrid extends React.Component {
                             width={ imageWidth }
                             src={ image.src }
                             key={ image.src }
-                            left={ rowWidthToNow - imageWidth }
+                            left={
+                              this.props.sceneLeft
+                                ? sceneImageWidth + (rowWidthToNow - imageWidth)
+                                : rowWidthToNow - imageWidth
+                            }
                             top={ colHeightToNow - imageHeight }
                 />
               );
@@ -214,16 +218,19 @@ export default class SceneGrid extends React.Component {
     // ref="container"
     return (
       <div>
-        <PaperImage style={ { float: this.props.sceneLeft ? 'left' : 'right' } }
-                    margin={ this.props.margin }
+        <PaperImage margin={ this.props.margin }
                     height={ finalSceneImageHeight }
                     width={ finalSceneImageWidth }
                     src={ this.props.sceneImage.src }
-                    left={ containerWidth - finalSceneImageWidth }
+                    left={
+                      this.props.sceneLeft
+                        ? 0
+                        : containerWidth - finalSceneImageWidth
+                    }
         />
         <div>
           {
-            this.renderNeighborRows(neighborRows, scaleFactor)
+            this.renderNeighborRows(neighborRows, scaleFactor, finalSceneImageWidth)
           }
         </div>
         <div style={ { marginTop: 5 } }>

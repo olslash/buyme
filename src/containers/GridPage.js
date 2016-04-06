@@ -83,9 +83,6 @@ export default class GridPage extends React.Component {
 
   getRowHeight = (i) => {
     return this.state.rowHeights[i] || 20;
-
-    // const ref = this._rowRefs[i];
-    // return ref && ref.getHeight() || 0;
   };
 
   isRowLoaded = (i) => {
@@ -151,24 +148,3 @@ export default class GridPage extends React.Component {
     );
   }
 }
-
-
-// {
-  /**/
-// }
-
-
-// (<SceneGrid sceneImage={ images[4] }
-//             sceneNeighborRows={ 2 }
-//             imagePool={ [...images, ...images, ...images] }
-//             onItemClick={ this.handleItemClick }
-//             fullScene
-//   />
-//   < SceneGrid
-// sceneImage = { images[3] }
-// sceneNeighborRows = { 2 }
-// onItemClick = { this.handleItemClick
-// }
-// imagePool = { [...images
-// ] }
-// />)
