@@ -112,7 +112,7 @@ export default class SceneGrid extends React.Component {
       return (
         <div key={ coli }>
           {
-            map(images, ({ image }, i) => {
+            map(images, ({ image, meta }, i) => {
               const imageHeight = height * scaleFactor;
               const imageAspectRatio = aspectRatio(image);
               const imageWidth = imageAspectRatio * height * scaleFactor;
@@ -120,10 +120,11 @@ export default class SceneGrid extends React.Component {
               rowWidthToNow += imageWidth;
 
               return (
-                <PaperImage margin={ this.props.margin }
+                <PaperImage src={ image.src }
+                            margin={ this.props.margin }
+                            overlayTitle={ meta.title }
                             height={ imageHeight }
                             width={ imageWidth }
-                            src={ image.src }
                             key={ image.src }
                             left={
                               this.props.sceneLeft
@@ -131,6 +132,7 @@ export default class SceneGrid extends React.Component {
                                 : rowWidthToNow - imageWidth
                             }
                             top={ colHeightToNow - imageHeight }
+
                 />
               );
             })
@@ -192,12 +194,13 @@ export default class SceneGrid extends React.Component {
       return (
         <div key={ i }>
           {
-            images.map(({ image }) => {
+            images.map(({ image, meta }) => {
               const imageWidth = aspectRatio(image) * height;
               currentRowWidth += imageWidth;
 
               return (
                 <PaperImage src={ image.src }
+                            overlayTitle={ meta.title }
                             height={ height }
                             width={ imageWidth }
                             top={ finalSceneImageHeight + overflowHeightToNow - height }
@@ -218,10 +221,10 @@ export default class SceneGrid extends React.Component {
     // ref="container"
     return (
       <div>
-        <PaperImage margin={ this.props.margin }
+        <PaperImage src={ this.props.sceneImage.src }
+                    margin={ this.props.margin }
                     height={ finalSceneImageHeight }
                     width={ finalSceneImageWidth }
-                    src={ this.props.sceneImage.src }
                     left={
                       this.props.sceneLeft
                         ? 0

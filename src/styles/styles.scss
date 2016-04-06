@@ -45,3 +45,14 @@ body {
 }
 
 /* close commented backslash hack */
+
+// ***********************************
+.paper-overlay-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: black;
+  color: white;
+  padding: 5px;
+}

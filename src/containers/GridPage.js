@@ -12,14 +12,7 @@ const {
   func, number, oneOfType, objectOf, status, object, shape, arrayOf
 } = PropTypes;
 
-// import DataProvider from 'shared-components/DataProvider';
-import WidthProvider from 'shared-components/WidthProvider';
 import SceneGrid from 'shared-components/SceneGrid';
-// import { PrintProps } from 'helpers/debug';
-
-// import { requireAllOfType } from 'helpers/file';
-// const images = requireAllOfType(/\.(png|jpg|jpeg)$/, '../static/images');
-
 
 @connect((state) => {
   const data = selectData(state, { type: 'products' });
