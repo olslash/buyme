@@ -107,6 +107,7 @@ export default class GridPage extends React.Component {
     return (
         <SceneGrid sceneImage={ items[i].sceneImage }
                    sceneNeighborRows={ 1 }
+                   sceneLeft={ i % 2 === 0 }
                    imagePool={ items[i].components }
                    onHeightCalculated={ this.setRowHeight }
                    width={ width }

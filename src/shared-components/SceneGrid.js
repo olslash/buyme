@@ -22,7 +22,7 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
   let resultHeight;
 
   let rowWidthAtIdealHeight = 0;
-  const rowImages = takeWhile(images, (image) => {
+  const rowImages = takeWhile(images, ({image}) => {
     const imageAspectRatio = aspectRatio(image);
     const scaledImageWidth = idealHeight * imageAspectRatio;
 
@@ -112,7 +112,7 @@ export default class SceneGrid extends React.Component {
       return (
         <div key={ coli }>
           {
-            map(images, (image, i) => {
+            map(images, ({ image }, i) => {
               const imageHeight = height * scaleFactor;
               const imageAspectRatio = aspectRatio(image);
               const imageWidth = imageAspectRatio * height * scaleFactor;
@@ -151,7 +151,7 @@ export default class SceneGrid extends React.Component {
       sceneNeighborRows = 0;
     }
 
-    let remainingImages = [...map(this.props.imagePool, 'image')];
+    let remainingImages = this.props.imagePool;
     const idealRowHeight = this.props.sceneImage.height / sceneNeighborRows;
     const neighborRows = this.neighborRows = range(sceneNeighborRows).map(_ => {
       const { images, height } = balancedRow(remainingImages, idealRowHeight, containerWidth);
@@ -192,7 +192,7 @@ export default class SceneGrid extends React.Component {
       return (
         <div key={ i }>
           {
-            images.map(image => {
+            images.map(({ image }) => {
               const imageWidth = aspectRatio(image) * height;
               currentRowWidth += imageWidth;
 
