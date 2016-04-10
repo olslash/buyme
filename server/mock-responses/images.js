@@ -115,7 +115,9 @@ imageResponse.products = [
   ...imageResponse.products,
   ...imageResponse.products,
   ...imageResponse.products,
-  ...imageResponse.products
+  ...imageResponse.products,
+  ...imageResponse.products,
+
 ];
 
 module.exports = function() {

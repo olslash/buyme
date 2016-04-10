@@ -7,7 +7,7 @@ const { number, string } = PropTypes;
 
 
 export default function PaperImage({
-  src, height, width, top = 0, left = 0, margin = 0, zDepth = 1, style, overlayTitle
+  src, height, width, top = 0, left = 0, margin = 25, zDepth = 1, style, overlayTitle
 }) {
   const marginHeight = height - margin;
   const marginWidth = width - margin;
@@ -45,10 +45,11 @@ export default function PaperImage({
            transitionEnabled={ false }
     >
       {
-        <div className="paper-overlay-title" >
-          { overlayTitle }
-        </div>
+        // <div className="paper-overlay-title" >
+        //   { overlayTitle }
+        // </div>
       }
+
       <img height={ marginHeight }
            width={ marginWidth }
            src={ src }

@@ -1,5 +1,5 @@
-import { createStore } from 'redux';
-import multi from 'redux-multi'
+import { createStore, applyMiddleware } from 'redux';
+import multi from 'redux-multi';
 import thunk from 'redux-thunk';
 import promise from 'redux-promise';
 import createLogger from 'redux-logger';

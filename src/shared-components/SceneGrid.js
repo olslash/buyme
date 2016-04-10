@@ -22,7 +22,7 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
   let resultHeight;
 
   let rowWidthAtIdealHeight = 0;
-  const rowImages = takeWhile(images, ({image}) => {
+  const rowImages = takeWhile(images, ({ image }) => {
     const imageAspectRatio = aspectRatio(image);
     const scaledImageWidth = idealHeight * imageAspectRatio;
 
@@ -35,7 +35,7 @@ function balancedRow(imagePool, idealHeight, containerWidth) { //-- returns the 
   });
 
   const rowAspectRatio = aspectRatio({ width: rowWidthAtIdealHeight, height: idealHeight });
-  const rowHeightAtContainerWidth = containerWidth / rowAspectRatio;
+  const rowHeightAtContainerWidth = (containerWidth / rowAspectRatio) || 0; // protect against NaN for empty rows
 
   if (!(rowWidthAtIdealHeight >= containerWidth)) {
     // not enough images to fill the row; use ideal height and leave space, to avoid scaling the few images too large.
@@ -88,10 +88,12 @@ export default class SceneGrid extends React.Component {
   shouldComponentUpdate = shouldPureComponentUpdate;
 
   componentDidMount() {
+    console.log('didmount')
     this.props.onHeightCalculated(this.props.id, this.getHeight());
   }
 
   componentDidUpdate() {
+    console.log('did update')
     this.props.onHeightCalculated(this.props.id, this.getHeight());
   }
 
@@ -146,7 +148,6 @@ export default class SceneGrid extends React.Component {
     let totalHeight = 0;
 
     const containerWidth = this.props.width; // stay 1 pixel away from the edge to prevent browser reflow bugs.
-
     let { sceneNeighborRows } = this.props;
 
     if (this.props.fullScene) {
@@ -216,11 +217,9 @@ export default class SceneGrid extends React.Component {
     }).filter(Boolean);
 
     this._height = totalHeight + 50;
-    //style={ { 'lineHeight': 0, 'marginBottom': 20 } }
-    // className="clearfix"
-    // ref="container"
+
     return (
-      <div>
+      <div style={ { width: this.props.width } }>
         <PaperImage src={ this.props.sceneImage.src }
                     margin={ this.props.margin }
                     height={ finalSceneImageHeight }
@@ -231,17 +230,12 @@ export default class SceneGrid extends React.Component {
                         : containerWidth - finalSceneImageWidth
                     }
         />
-        <div>
-          {
-            this.renderNeighborRows(neighborRows, scaleFactor, finalSceneImageWidth)
-          }
-        </div>
-        <div style={ { marginTop: 5 } }>
-          { /* margin required to prevent row above interfering with layout */ }
-          {
-            overflowRows
-          }
-        </div>
+        {
+          this.renderNeighborRows(neighborRows, scaleFactor, finalSceneImageWidth)
+        }
+        {
+          overflowRows
+        }
       </div>
     );
   }
